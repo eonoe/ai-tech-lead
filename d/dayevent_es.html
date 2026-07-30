@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Coding Agents 101 — Taller en vivo gratuito, 20 de julio</title>
+<title>Coding Agents 101 — Taller en vivo gratuito, 17 de agosto</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -16,6 +16,8 @@
   --maxw:1080px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+/* .signup usa display:flex, que si no ganaría a la regla del navegador para [hidden]. */
+[hidden]{display:none!important;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
 a{color:inherit;text-decoration:none;}
@@ -62,6 +64,12 @@ h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-
 .signup{display:flex;flex-wrap:wrap;gap:10px;align-items:center;max-width:520px;}
 .signup input{flex:1;min-width:200px;font-family:'Inter',sans-serif;font-size:15px;padding:13px 15px;border:2px solid var(--ink);border-radius:10px;}
 .signup input:focus{outline:none;box-shadow:3px 3px 0 var(--blue);}
+.signup button[disabled]{opacity:.6;cursor:default;}
+/* Honeypot: fuera de pantalla en vez de display:none, que algunos bots ignoran. */
+.signup .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;}
+.signup-msg{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.5;margin-top:12px;max-width:520px;}
+.signup-msg.ok{color:var(--blue-ink);font-weight:700;}
+.signup-msg.err{color:#c02b2b;font-weight:700;}
 .note{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-top:12px;letter-spacing:.01em;}
 
 /* TERMINAL */
@@ -154,6 +162,9 @@ h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-
 .closer .signup{margin:0 auto;justify-content:center;}
 .closer .signup input{border-color:#fff;}
 .closer .note{color:#cfceff;text-align:center;}
+.closer .signup-msg{margin:0 auto;text-align:center;}
+.closer .signup-msg.ok{color:#fff;}
+.closer .signup-msg.err{color:#ffd2d2;}
 
 footer{padding:34px 0;}
 .foot{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;}
@@ -167,7 +178,7 @@ footer{padding:34px 0;}
 <!-- MARQUEE -->
 <div class="marq" aria-hidden="true">
   <div class="marq-track">
-    <span>Coding Agents 101</span>·<span>Taller en vivo gratuito</span>·<span>20 – 24 jul 2026</span>·<span>4 sesiones × 90 min</span>·<span>Trae tu repositorio</span>·<span>Preguntas en vivo</span>·<span>Coding Agents 101</span>·<span>Taller en vivo gratuito</span>·<span>20 – 24 jul 2026</span>·<span>4 sesiones × 90 min</span>·<span>Trae tu repositorio</span>·<span>Preguntas en vivo</span>·
+    <span>Coding Agents 101</span>·<span>Taller en vivo gratuito</span>·<span>17 – 20 ago 2026</span>·<span>4 sesiones × 2 horas</span>·<span>Trae tu repositorio</span>·<span>Preguntas en vivo</span>·<span>Coding Agents 101</span>·<span>Taller en vivo gratuito</span>·<span>17 – 20 ago 2026</span>·<span>4 sesiones × 2 horas</span>·<span>Trae tu repositorio</span>·<span>Preguntas en vivo</span>·
   </div>
 </div>
 
@@ -188,14 +199,16 @@ footer{padding:34px 0;}
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
-        <div class="tag"><span class="dot"></span> Gratis · en vivo · empieza el lun 20 jul</div>
+        <div class="tag"><span class="dot"></span> Gratis · en vivo · empieza el lun 17 ago</div>
         <h1>Construye con <span class="hl">agentes&nbsp;de&nbsp;código</span> de verdad.</h1>
         <p class="sub">Un taller práctico y gratuito. Cuatro sesiones en vivo en una semana, dos horas cada una. Construyes en paralelo sobre un repositorio tuyo y te vas habiendo enviado un cambio real con un agente.</p>
-        <div class="signup" id="get">
-          <input type="email" placeholder="tu@correo.com" aria-label="Correo electrónico">
-          <button class="btn btn-cta" onclick="return false">Apúntate gratis →</button>
-        </div>
+        <form class="signup" id="get" data-source="workshop" novalidate>
+          <input type="email" name="email" placeholder="tu@correo.com" aria-label="Correo electrónico" required autocomplete="email">
+          <input type="text" class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button type="submit" class="btn btn-cta">Apúntate gratis →</button>
+        </form>
         <div class="note">// solo tu correo · sin tarjeta · grabaciones si te pierdes una</div>
+        <div class="signup-msg" role="status" aria-live="polite"></div>
       </div>
 
       <!-- TERMINAL ART -->
@@ -219,7 +232,7 @@ footer{padding:34px 0;}
     <div class="wrap cband-in">
       <div>
         <div class="cls">Plazas limitadas · apúntate ya</div>
-        <div class="cl">Primera sesión: lunes 20 de julio · 6:00 PM</div>
+        <div class="cl">Primera sesión: lunes 17 de agosto · 6:00 PM</div>
       </div>
       <div class="count" id="count" aria-live="polite">
         <div class="cu"><div class="cn" id="c-d">--</div><div class="cs">Días</div></div>
@@ -235,7 +248,7 @@ footer{padding:34px 0;}
     <div class="wrap">
       <div class="stats">
         <div class="stat"><div class="n">4</div><div class="l">sesiones en vivo, prácticas</div></div>
-        <div class="stat"><div class="n">90 min</div><div class="l">cada una · seis horas en total</div></div>
+        <div class="stat"><div class="n">2 h</div><div class="l">cada una · ocho horas en total</div></div>
         <div class="stat"><div class="n">En vivo</div><div class="l">preguntas con tu repositorio</div></div>
         <div class="stat"><div class="n">Gratis</div><div class="l">solo tu correo, sin tarjeta</div></div>
       </div>
@@ -248,33 +261,33 @@ footer{padding:34px 0;}
       <div class="sec-head">
         <div class="eyebrow">// el taller</div>
         <h2>Cuatro sesiones en vivo. Un cambio real, enviado.</h2>
-        <p class="lead">Hora y media cada una, en vivo y prácticas. Construyes en paralelo sobre un repositorio tuyo y preguntas sobre la marcha. Para la última sesión habrás fusionado un cambio escrito por un agente, y sabrás por qué funcionó.</p>
+        <p class="lead">Dos horas cada una, en vivo y prácticas. Construyes en paralelo sobre un repositorio tuyo y preguntas sobre la marcha. Para la última sesión habrás fusionado un cambio escrito por un agente, y sabrás por qué funcionó.</p>
       </div>
       <div class="sessions">
         <div class="scard">
           <div class="badge">SESIÓN 1</div>
-          <div class="when">Lun, 20 jul · 6:00 PM</div>
+          <div class="when">Lun, 17 ago · 6:00 PM</div>
           <h3>Pon un agente a trabajar de verdad</h3>
           <p>Instala un agente de código y corremos juntos una sesión real, no un ejemplo de juguete. Aprendes el ciclo que sigue todo agente: reunir contexto, actuar y verificar, y lo pones a trabajar en una tarea real.</p>
           <div class="out">Te llevas: un agente corriendo en tu propio repositorio, haciendo algo útil.</div>
         </div>
         <div class="scard">
           <div class="badge">SESIÓN 2</div>
-          <div class="when">Mar, 21 jul · 6:00 PM</div>
+          <div class="when">Mar, 18 ago · 6:00 PM</div>
           <h3>El contexto que lo cambia todo</h3>
           <p>La diferencia entre un agente impreciso y uno afilado es, sobre todo, el contexto. Escribes tu primer AGENTS.md para que el agente deje de adivinar y empiece a usar las convenciones reales de tu proyecto.</p>
           <div class="out">Te llevas: un AGENTS.md que el agente sigue de verdad.</div>
         </div>
         <div class="scard">
           <div class="badge">SESIÓN 3</div>
-          <div class="when">Mié, 22 jul · 6:00 PM</div>
+          <div class="when">Mié, 19 ago · 6:00 PM</div>
           <h3>Revisa como se debe</h3>
           <p>La habilidad de verdad no es escribir prompts, es leer lo que el agente escribió y cuestionarlo. Revisamos un cambio en vivo, rechazas lo que está mal y fusionas el resto. Este es el hábito que evita que la calidad se caiga.</p>
           <div class="out">Te llevas: tu primer cambio hecho por un agente, revisado y fusionado.</div>
         </div>
         <div class="scard">
           <div class="badge">SESIÓN 4</div>
-          <div class="when">Jue, 23 jul · 6:00 PM</div>
+          <div class="when">Jue, 20 ago · 6:00 PM</div>
           <h3>Que perdure</h3>
           <p>Conviertes un flujo de trabajo que acabas de hacer en algo reutilizable, y aprendes cuándo recurrir a un agente es mala idea. Después abrimos el espacio: trae tu repositorio y tus preguntas, y las resolvemos en vivo.</p>
           <div class="out">Te llevas: un flujo reutilizable, claridad sobre los límites, y tus preguntas resueltas.</div>
@@ -331,7 +344,7 @@ footer{padding:34px 0;}
       <div class="q"><div class="qh" role="button" tabindex="0">¿Necesito saber programar?<span class="qx">+</span></div><div class="qb">Un poco. Deberías manejarte en al menos un lenguaje y moverte con soltura en la línea de comandos y en Git. Si ya escribes código, estás listo.</div></div>
       <div class="q"><div class="qh" role="button" tabindex="0">¿Qué agente de código necesito?<span class="qx">+</span></div><div class="qb">Sirve cualquier agente de código actual. Los hábitos se trasladan entre ellos, así que usa el que ya tengas a mano. Tener acceso a uno es el único requisito imprescindible.</div></div>
       <div class="q"><div class="qh" role="button" tabindex="0">¿Y si me pierdo una sesión?<span class="qx">+</span></div><div class="qb">Cada sesión se graba. Si no puedes asistir a una en vivo, recibes la grabación, y puedes llevar tus preguntas a la siguiente sesión.</div></div>
-      <div class="q"><div class="qh" role="button" tabindex="0">¿Cuánto tiempo es?<span class="qx">+</span></div><div class="qb">Cuatro sesiones en vivo de hora y media cada una, seis horas en total, durante la semana de lanzamiento. Tienes las grabaciones por si necesitas ponerte al día entre sesiones.</div></div>
+      <div class="q"><div class="qh" role="button" tabindex="0">¿Cuánto tiempo es?<span class="qx">+</span></div><div class="qb">Cuatro sesiones en vivo de dos horas cada una, ocho horas en total, durante la semana de lanzamiento. Tienes las grabaciones por si necesitas ponerte al día entre sesiones.</div></div>
       <div class="q"><div class="qh" role="button" tabindex="0">¿Esto lleva a un curso de pago?<span class="qx">+</span></div><div class="qb">Es la puerta de entrada. Si 101 te engancha, el programa profundo de Tech Lead 2.0 retoma donde este termina y aplica las mismas ideas a un proyecto real. No hay presión por continuar, y 101 está pensado para valer tu tiempo por sí solo.</div></div>
     </div>
   </section>
@@ -340,12 +353,14 @@ footer{padding:34px 0;}
   <section class="closer">
     <div class="wrap closer-in">
       <h2>Aparta tu lugar.</h2>
-      <p>Cuatro sesiones en vivo, gratis, desde el lunes 20 de julio. Trae un repositorio en el que ya trabajes.</p>
-      <div class="signup">
-        <input type="email" placeholder="tu@correo.com" aria-label="Correo electrónico">
-        <button class="btn btn-pop" onclick="return false">Apúntate gratis →</button>
-      </div>
+      <p>Cuatro sesiones en vivo, gratis, desde el lunes 17 de agosto. Trae un repositorio en el que ya trabajes.</p>
+      <form class="signup" data-source="workshop" novalidate>
+        <input type="email" name="email" placeholder="tu@correo.com" aria-label="Correo electrónico" required autocomplete="email">
+        <input type="text" class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit" class="btn btn-pop">Apúntate gratis →</button>
+      </form>
       <div class="note" id="closer-note">// solo tu correo</div>
+      <div class="signup-msg" role="status" aria-live="polite"></div>
     </div>
   </section>
 
@@ -367,8 +382,8 @@ footer{padding:34px 0;}
 </footer>
 
 <script>
-// Cuenta regresiva a la primera sesión: lun 20 jul 2026, 6:00 PM hora local
-var target = new Date(2026, 6, 20, 18, 0, 0).getTime(); // mes 0-indexado: 6 = julio
+// Cuenta regresiva a la primera sesión: lun 17 ago 2026, 6:00 PM hora local
+var target = new Date(2026, 7, 17, 18, 0, 0).getTime(); // mes 0-indexado: 7 = agosto
 var elD=document.getElementById('c-d'),elH=document.getElementById('c-h'),
     elM=document.getElementById('c-m'),elS=document.getElementById('c-s'),
     countEl=document.getElementById('count'),closerNote=document.getElementById('closer-note');
@@ -394,6 +409,90 @@ for(var i=0;i<heads.length;i++){(function(head){
   head.addEventListener('click',t);
   head.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();t();}});
 })(heads[i]);}
+
+// SIGNUP — envía a un web app de Google Apps Script que escribe en una hoja de cálculo.
+// Pega aquí la URL /exec de tu deployment. Ver apps-script/README.md.
+var SIGNUP_ENDPOINT='https://script.google.com/macros/s/AKfycbyk628U2RLrqQqawB9xZEgO-jV8gRen4WjQ5YBDJB0Ko1DO40ycOkVv1wq3rHFdSYTG/exec';
+var SIGNUP_LANG='es';
+var SIGNUP_KEY='ca101_signed_up';
+
+var COPY={
+  sending:'Enviando…',
+  ok:'Ya estás dentro — revisa tu correo para los detalles de las sesiones.',
+  invalid:'Ese correo no parece válido.',
+  failed:'Algo falló. Escríbeme a noe@jupiterapp.io y te apunto a mano.'
+};
+var EMAIL_RE=/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
+
+var forms=document.querySelectorAll('.signup');
+
+function msgFor(form){
+  var el=form.nextElementSibling;
+  while(el&&!el.classList.contains('signup-msg')) el=el.nextElementSibling;
+  return el;
+}
+function say(form,text,cls){
+  var el=msgFor(form);
+  if(!el) return;
+  el.textContent=text;
+  el.className='signup-msg '+(cls||'');
+}
+function markDone(form){
+  form.hidden=true;
+  say(form,COPY.ok,'ok');
+}
+
+// Quien ya se apuntó ve el estado confirmado en vez de un formulario vacío.
+try{ if(localStorage.getItem(SIGNUP_KEY)==='1'){ for(var f=0;f<forms.length;f++) markDone(forms[f]); } }catch(e){}
+
+for(var s=0;s<forms.length;s++){(function(form){
+  form.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var input=form.querySelector('input[name="email"]');
+    var button=form.querySelector('button');
+    var email=(input.value||'').trim().toLowerCase();
+
+    if(!EMAIL_RE.test(email)){ say(form,COPY.invalid,'err'); input.focus(); return; }
+
+    var label=button.textContent;
+    button.disabled=true; button.textContent=COPY.sending;
+    say(form,'','');
+
+    var payload=JSON.stringify({
+      email:email,
+      source:form.getAttribute('data-source')||'workshop',
+      lang:SIGNUP_LANG,
+      page:location.pathname,
+      referrer:document.referrer,
+      utm:location.search,
+      ua:navigator.userAgent,
+      company:(form.querySelector('input[name="company"]')||{}).value||''
+    });
+
+    function done(){
+      try{ localStorage.setItem(SIGNUP_KEY,'1'); }catch(e){}
+      for(var i=0;i<forms.length;i++) markDone(forms[i]);
+    }
+    function fail(){
+      button.disabled=false; button.textContent=label;
+      say(form,COPY.failed,'err');
+    }
+
+    // text/plain mantiene la petición "simple", así el navegador se salta el
+    // preflight CORS que Apps Script no sabe responder.
+    fetch(SIGNUP_ENDPOINT,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:payload
+    }).then(function(r){ return r.json(); })
+      .then(function(res){ if(res&&res.ok){ done(); } else if(res&&res.error==='invalid_email'){ button.disabled=false; button.textContent=label; say(form,COPY.invalid,'err'); } else { fail(); } })
+      .catch(function(){
+        // Fallback opaco: la petición llega igual, solo que no podemos leer la respuesta.
+        fetch(SIGNUP_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:payload})
+          .then(done).catch(fail);
+      });
+  });
+})(forms[s]);}
 </script>
 </body>
 </html>

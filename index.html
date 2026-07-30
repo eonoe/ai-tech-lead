@@ -25,6 +25,8 @@
   --maxw:1040px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+/* .tk-signup sets display:flex, which would otherwise beat the UA rule for [hidden]. */
+[hidden]{display:none!important;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
 a{color:inherit;text-decoration:none;}
@@ -87,6 +89,17 @@ h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-
 .chk{flex-shrink:0;margin-top:3px;color:var(--accent);}
 .tk.free .chk{color:var(--ok);}
 .tk .btn{width:100%;justify-content:center;}
+
+/* WAITLIST SIGNUP (Tech Lead 2.0 isn't open yet — capture interest instead) */
+.tk-signup{display:flex;flex-direction:column;gap:9px;}
+.tk-signup input[type="email"]{font-family:'Inter',sans-serif;font-size:14px;padding:11px 14px;border:1px solid var(--line2);border-radius:9px;background:#fff;color:var(--ink);width:100%;}
+.tk-signup input[type="email"]:focus{outline:none;border-color:var(--accent);}
+.tk-signup .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;}
+.tk-signup button[disabled]{opacity:.6;cursor:default;}
+.tk-hint{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:10px;}
+.signup-msg{font-size:13px;line-height:1.5;margin-top:4px;}
+.signup-msg.ok{color:var(--ok);font-weight:600;}
+.signup-msg.err{color:#c02b2b;font-weight:600;}
 
 /* LOOP */
 .loop{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;}
@@ -359,7 +372,7 @@ footer{border-top:1px solid var(--line);padding:36px 0;}
             <li><svg class="chk" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Templates you keep forever</li>
             <li><svg class="chk" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> No card, no commitment</li>
           </ul>
-          <a href="#" class="btn btn-line" onclick="return false">Start free</a>
+          <a href="d/dayevent.html#get" class="btn btn-line">Start free</a>
         </div>
         <div class="tk deep featured">
           <span class="tk-flag">Deep · project-based</span>
@@ -373,7 +386,13 @@ footer{border-top:1px solid var(--line);padding:36px 0;}
             <li><svg class="chk" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> A deliverable that ships every phase</li>
             <li><svg class="chk" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> A team playbook ready to roll out</li>
           </ul>
-          <a href="#" class="btn btn-solid" onclick="return false">Join the deep track</a>
+          <div class="tk-hint">Not open yet — leave your email and you'll get the first invite when dates go out.</div>
+          <form class="tk-signup" data-source="techlead2" novalidate>
+            <input type="email" name="email" placeholder="you@email.com" aria-label="Email address" required autocomplete="email">
+            <input type="text" class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <button type="submit" class="btn btn-solid">Join the waitlist</button>
+          </form>
+          <div class="signup-msg" role="status" aria-live="polite"></div>
         </div>
       </div>
     </div>
@@ -510,6 +529,69 @@ faqs.forEach(f=>{
   head.addEventListener('click',toggle);
   head.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
   ql.appendChild(el);
+});
+
+// WAITLIST — posts to the same Google Apps Script web app as the workshop pages.
+// Paste the /exec URL from your deployment here. See apps-script/README.md.
+const SIGNUP_ENDPOINT='https://script.google.com/macros/s/AKfycbyk628U2RLrqQqawB9xZEgO-jV8gRen4WjQ5YBDJB0Ko1DO40ycOkVv1wq3rHFdSYTG/exec';
+const SIGNUP_KEY='tl2_waitlist';
+const EMAIL_RE=/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
+const COPY={
+  sending:'Sending…',
+  ok:"You're on the list — I'll email you first when dates go out.",
+  invalid:"That email address doesn't look right.",
+  failed:"Something went wrong. Email noe@jupiterapp.io and I'll add you by hand.",
+};
+
+document.querySelectorAll('.tk-signup').forEach(form=>{
+  const msg=form.parentElement.querySelector('.signup-msg');
+  const say=(text,cls='')=>{ msg.textContent=text; msg.className='signup-msg '+cls; };
+  const markDone=()=>{ form.hidden=true; say(COPY.ok,'ok'); };
+
+  try{ if(localStorage.getItem(SIGNUP_KEY)==='1') markDone(); }catch(e){}
+
+  form.addEventListener('submit',ev=>{
+    ev.preventDefault();
+    const input=form.querySelector('input[name="email"]');
+    const button=form.querySelector('button');
+    const email=(input.value||'').trim().toLowerCase();
+
+    if(!EMAIL_RE.test(email)){ say(COPY.invalid,'err'); input.focus(); return; }
+
+    const label=button.textContent;
+    button.disabled=true; button.textContent=COPY.sending;
+    say('');
+
+    const payload=JSON.stringify({
+      email,
+      source:form.dataset.source||'techlead2',
+      lang:'en',
+      page:location.pathname,
+      referrer:document.referrer,
+      utm:location.search,
+      ua:navigator.userAgent,
+      company:form.querySelector('input[name="company"]').value,
+    });
+
+    const done=()=>{ try{ localStorage.setItem(SIGNUP_KEY,'1'); }catch(e){} markDone(); };
+    const reset=()=>{ button.disabled=false; button.textContent=label; };
+    const fail=()=>{ reset(); say(COPY.failed,'err'); };
+
+    // text/plain keeps this a "simple" request, so the browser skips the CORS
+    // preflight that Apps Script can't answer.
+    fetch(SIGNUP_ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:payload})
+      .then(r=>r.json())
+      .then(res=>{
+        if(res&&res.ok) done();
+        else if(res&&res.error==='invalid_email'){ reset(); say(COPY.invalid,'err'); }
+        else fail();
+      })
+      .catch(()=>{
+        // Opaque fallback: the request still reaches the script, we just can't read the reply.
+        fetch(SIGNUP_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:payload})
+          .then(done).catch(fail);
+      });
+  });
 });
 </script>
 </body>
