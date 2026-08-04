@@ -202,13 +202,19 @@ footer{padding:34px 0;}
         <div class="tag"><span class="dot"></span> Gratis · en vivo · empieza el lun 17 ago</div>
         <h1>Construye con <span class="hl">agentes&nbsp;de&nbsp;código</span> de verdad.</h1>
         <p class="sub">Un taller práctico y gratuito. Cuatro sesiones en vivo en una semana, dos horas cada una. Construyes en paralelo sobre un repositorio tuyo y te vas habiendo enviado un cambio real con un agente.</p>
-        <form class="signup" id="get" data-source="workshop" novalidate>
-          <input type="email" name="email" placeholder="tu@correo.com" aria-label="Correo electrónico" required autocomplete="email">
-          <input type="text" class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <button type="submit" class="btn btn-cta">Apúntate gratis →</button>
-        </form>
-        <div class="note">// solo tu correo · sin tarjeta · grabaciones si te pierdes una</div>
-        <div class="signup-msg" role="status" aria-live="polite"></div>
+        <!-- The id lives on this wrapper, not on the form. The form gets [hidden]
+             once someone has signed up, and a display:none anchor target cannot be
+             scrolled to, which would kill inbound #get links. The form, note and
+             message stay siblings here because msgFor() walks nextElementSibling. -->
+        <div id="get">
+          <form class="signup" data-source="workshop" novalidate>
+            <input type="email" name="email" placeholder="tu@correo.com" aria-label="Correo electrónico" required autocomplete="email">
+            <input type="text" class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <button type="submit" class="btn btn-cta">Apúntate gratis →</button>
+          </form>
+          <div class="note">// solo tu correo · sin tarjeta · grabaciones si te pierdes una</div>
+          <div class="signup-msg" role="status" aria-live="polite"></div>
+        </div>
       </div>
 
       <!-- TERMINAL ART -->
