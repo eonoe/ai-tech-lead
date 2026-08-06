@@ -1,7 +1,8 @@
 # Signup capture — setup
 
-Email capture for the three pages in this repo, backed by a Google Sheet. No server, no
-database, no third-party form service. `Code.gs` in this folder is the source of truth for
+Email capture for the three pages of the site, backed by a Google Sheet. The pages live in
+[eonoe/eonoe.github.io](https://github.com/eonoe/eonoe.github.io); this folder holds only the
+backend. No server, no database, no third-party form service. `Code.gs` in this folder is the source of truth for
 what's deployed; the deployment itself lives in your Google account.
 
 ## One-time setup
@@ -41,14 +42,15 @@ Copy the **Web app URL**. It ends in `/exec`.
 
 **4. Paste the URL into the pages**
 
-Replace `PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE` in all three:
+Replace `PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE` in all three, over in the
+[eonoe/eonoe.github.io](https://github.com/eonoe/eonoe.github.io) repo:
 
-- `d/dayevent.html`
-- `d/dayevent_es.html`
-- `index.html`
+- `index.html` — the workshop landing page
+- `es.html` — its Spanish version
+- `course/index.html` — the Tech Lead 2.0 waitlist
 
 ```bash
-grep -rn PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE .
+grep -rn PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE /path/to/eonoe.github.io
 ```
 
 **5. Check it**
@@ -69,7 +71,7 @@ Keep this repo's `Code.gs` in sync when you edit it there.
 | --- | --- |
 | `timestamp` | server-side, not client clock |
 | `email` | trimmed, lowercased |
-| `source` | `workshop` (both dayevent pages) or `techlead2` (index.html waitlist) |
+| `source` | `workshop` (`/` and `/es.html`) or `techlead2` (the `/course/` waitlist) |
 | `lang` | `en` / `es` |
 | `page` | pathname the signup came from |
 | `referrer` | `document.referrer`, blank on direct visits |
