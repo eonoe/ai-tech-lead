@@ -1,8 +1,8 @@
 # ai-tech-lead
 
-The Google Apps Script that collects signups, plus redirect stubs for URLs this repo used to serve.
+Redirect stubs. Nothing here is edited any more.
 
-**The pages moved.** They all live in [eonoe/eonoe.github.io](https://github.com/eonoe/eonoe.github.io) now — edit them there, not here.
+The site moved to [eonoe/eonoe.github.io](https://github.com/eonoe/eonoe.github.io) — pages and the Apps Script signup backend both. This repo exists only so the URLs it used to serve keep working.
 
 | Old URL | Redirects to |
 |---|---|
@@ -12,6 +12,4 @@ The Google Apps Script that collects signups, plus redirect stubs for URLs this 
 
 GitHub Pages cannot serve a real 301, so each stub is a `<meta refresh>` plus a script that carries the URL hash across, so shared `#get` and `#pricing` links still land on the right anchor.
 
-## apps-script/
-
-`Code.gs` is a Google Apps Script web app deployed at the `SIGNUP_ENDPOINT` URL the pages POST to. It is not deployed from this repo — see `apps-script/README.md`. This is the only thing here that is still edited.
+Do not delete this repo or turn off its Pages setting — the redirects go with it.
